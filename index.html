@@ -3,487 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Ancient Vault</title>
-    <!-- Tailwind CSS CDN -->
+    <title>The Lost Artifact</title>
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for a thematic font (Inter as default, but adding a touch of adventure if possible) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts for a thematic feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* Custom CSS for specific flair and font */
+        /* Custom styles for the page */
         body {
-            font-family: 'Inter', sans-serif; /* Default font as per instructions */
-            background: linear-gradient(to bottom right, #4a3c2f, #2c241c); /* Dark earthy gradient */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px; /* Increased padding for more vertical space */
-            overflow: hidden; /* Prevent scroll on swirl/artifact screen */
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
         }
-
-        .lock-card {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 1rem; /* Rounded corners */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            background-color: #7a634e; /* Muted gold/brown */
-            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23645142' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E"); /* Subtle pattern */
-            border: 2px solid #5a4b3d;
-            color: #e0d8c7;
-            cursor: pointer;
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
         }
-
-        .lock-card:hover:not(.lock-permanently-unlocked) {
-            transform: translateY(-5px); /* Lift effect on hover */
-            box-shadow: 0 15px 20px -3px rgba(0, 0, 0, 0.2), 0 6px 8px -2px rgba(0, 0, 0, 0.1);
-        }
-
-        .lock-icon {
-            width: 70px; /* Slightly smaller icon */
-            height: 70px;
-            fill: #e0d8c7; /* Light color for the icon */
-            transition: transform 0.3s ease-in-out, fill 0.5s ease-in-out;
-        }
-
-        .lock-card:hover:not(.lock-permanently-unlocked) .lock-icon {
-            transform: scale(1.1);
-        }
-
-        /* Modal specific styles */
-        #passwordModal > div {
-            background-color: #3b3026; /* Darker brown for modal */
-            border: 2px solid #a07a5d; /* Rusty gold border */
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-        }
-
-        #closeModal {
-            color: #e0d8c7;
-        }
-
-        .password-input {
-            background-color: #e0d8c7;
-            color: #3b3026;
-            border: 1px solid #5a4b3d;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            width: 100%;
-            max-width: 180px; /* Slightly narrower input */
-            text-align: center;
-            font-size: 1rem; /* Slightly smaller font */
-        }
-
-        .submit-button {
-            background-color: #a07a5d; /* Rusty gold */
-            color: #ffffff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .submit-button:hover {
-            background-color: #8a684d;
-            transform: translateY(-1px);
-        }
-
-        .message {
-            font-weight: 600;
-            margin-top: 1rem;
-            min-height: 24px; /* Prevent layout shift */
-        }
-
-        .correct {
-            color: #82c91e; /* Green for success */
-        }
-
-        .incorrect {
-            color: #e03131; /* Red for error */
-        }
-
-        /* --- Animations --- */
+        /* Shake animation for incorrect password attempts */
         @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
-
-        .shake-animation {
-            animation: shake 0.3s ease-in-out 2; /* Shake twice */
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
-
-        /* Animation for successful unlock (brief glow and scale) */
-        @keyframes lock-open-visual {
-            0% { transform: scale(1); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-            50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(130, 201, 30, 0.8), 0 0 30px rgba(130, 201, 30, 0.6); } /* Brief glow and slight scale */
-            100% { transform: scale(1); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); } /* Return to normal shadow */
+        /* Custom styling for the congratulatory message */
+        .congrats-message {
+            animation: fadeIn 2s ease-in-out;
         }
-
-        .lock-opened-animation {
-            animation: lock-open-visual 1s ease-out forwards; /* Play once and stay at end state */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .lock-permanently-unlocked {
-            /* Style for the permanently unlocked state */
-            background-color: #3b3026; /* Darker, less vibrant */
-            border-color: #2b231c; /* Darker border */
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* Sunken look */
-            cursor: default;
-            pointer-events: none; /* Disable further clicks */
+        /* Styles for the modal popup to handle transitions */
+        .modal {
+            transition: opacity 0.3s ease;
         }
-
-        .lock-permanently-unlocked .lock-icon {
-            fill: #a07a5d; /* Change icon color to a muted gold/brown */
-            transform: translateY(5px); /* Slightly drop the icon */
-        }
-
-        .lock-permanently-unlocked p {
-            color: #9b8c7e; /* Faded text color */
-            transition: color 0.5s ease-in-out;
-        }
-
-        /* Swirl animation for all locks */
-        @keyframes swirl-out {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
-            50% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.5); opacity: 0.5; }
-            100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0); opacity: 0; }
-        }
-
-        .swirling-away {
-            animation: swirl-out 1.5s ease-in-out forwards;
-            animation-delay: var(--delay); /* Staggered delay */
-        }
-
-        /* Artifact Obtained Screen */
-        #artifactScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a); /* Dark, almost black gradient */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #e0d8c7;
-            text-align: center;
+        .modal-hidden {
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
-            z-index: 60; /* Above everything else */
-        }
-
-        #artifactScreen.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        #artifactScreen h2 {
-            font-family: 'Cinzel Decorative', serif;
-            font-size: 3.5rem;
-            color: #a07a5d; /* Rusty gold for title */
-            margin-bottom: 1.5rem;
-            text-shadow: 0 0 10px rgba(160, 122, 93, 0.6);
-        }
-
-        #artifactScreen p {
-            font-size: 1.5rem;
-            color: #e0d8c7;
-            max-width: 800px;
-            line-height: 1.6;
-        }
-
-        #artifactImage {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 2rem;
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)); /* Golden glow */
-        }
-
-        /* Responsive adjustments */
-        @media (min-width: 1024px) { /* Large screens */
-            .grid-cols-responsive {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-            }
-            .lock-card-wrapper {
-                height: 200px; /* Consistent height for large screens */
-            }
-        }
-
-        @media (min-width: 768px) and (max-width: 1023px) { /* Medium screens */
-            .grid-cols-responsive {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            .lock-card-wrapper {
-                height: 200px; /* Consistent height for medium screens */
-            }
-        }
-
-        @media (max-width: 767px) { /* Small screens */
-            .grid-cols-responsive {
-                grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columns on small screens */
-            }
-            .lock-card-wrapper {
-                height: 180px; /* Even smaller height for small screens */
-            }
-            .lock-icon {
-                width: 60px;
-                height: 60px;
-            }
-            .password-input {
-                max-width: 150px;
-                font-size: 0.9rem;
-            }
-            .submit-button {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-            #artifactScreen h2 {
-                font-size: 2.5rem;
-            }
-            #artifactScreen p {
-                font-size: 1.2rem;
-            }
-        }
-        @media (max-width: 480px) { /* Extra small screens */
-            .grid-cols-responsive {
-                grid-template-columns: repeat(1, minmax(0, 1fr)); /* 1 column on very small screens */
-            }
-            .lock-card-wrapper {
-                height: 220px; /* Adjust height for very small screens */
-            }
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-5">
-    <div id="mainContent" class="container mx-auto max-w-5xl bg-stone-800 bg-opacity-70 rounded-2xl p-8 shadow-2xl backdrop-blur-sm">
-        <h1 class="text-4xl md:text-5xl font-bold text-center text-amber-200 mb-10 tracking-wide" style="font-family: 'Cinzel Decorative', serif;">
-            The Ancient Vault of Christ
-        </h1>
+<body class="bg-gray-900 text-white">
 
-        <div id="locksGrid" class="grid grid-cols-responsive gap-8">
-            <!-- Lock 1 -->
-            <div class="lock-container lock-card-wrapper w-full relative">
-                <div class="lock-card" data-password="hello" data-lock-id="lock1">
-                    <!-- Closed Lock SVG Icon -->
-                    <svg class="lock-icon closed-lock-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C9.243 2 7 4.243 7 7v3H5v12h14V10h-2V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm-5 8h10v8H7v-8z"/>
-                    </svg>
-                    <!-- Open Lock SVG Icon (Initially hidden) -->
-                    <svg class="lock-icon open-lock-icon hidden" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 10V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6v12h12V10h-1zm-6-3c0-1.654 1.346-3 3-3s3 1.346 3 3v3h-6V7z"/>
-                    </svg>
-                    <p class="text-xl mt-4 font-semibold">The Sunstone Lock</p>
-                </div>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Main title of the escape room -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-yellow-300 tracking-wider font-cinzel">The Lost Artifact</h1>
+            <p class="text-gray-400 mt-2 text-lg">Click on a lock to solve the puzzle.</p>
+        </header>
+
+        <!-- Container for all the lock items -->
+        <main id="locks-container" class="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+            <!-- Lock items will be dynamically generated by JavaScript -->
+        </main>
+
+        <!-- Area for the final congratulatory message -->
+        <div id="congrats-container" class="text-center mt-16"></div>
+    </div>
+
+    <!-- Modal structure for password entry -->
+    <div id="password-modal" class="modal modal-hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-gray-800 border-2 border-gray-700 rounded-xl p-8 max-w-md w-full relative transform transition-all">
+            <!-- Close button for the modal -->
+            <button id="modal-close-button" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <!-- Modal content will be populated by JavaScript -->
+            <div class="flex justify-between items-start w-full mb-4">
+                <h2 id="modal-title" class="text-3xl font-bold text-yellow-400 font-cinzel"></h2>
+                <span id="modal-difficulty" class="text-sm font-semibold px-2 py-1 rounded h-fit"></span>
             </div>
-
-            <!-- Lock 2 -->
-            <div class="lock-container lock-card-wrapper w-full relative">
-                <div class="lock-card" data-password="jones" data-lock-id="lock2">
-                    <!-- Closed Lock SVG Icon -->
-                    <svg class="lock-icon closed-lock-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C9.243 2 7 4.243 7 7v3H5v12h14V10h-2V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm-5 8h10v8H7v-8z"/>
-                    </svg>
-                    <!-- Open Lock SVG Icon (Initially hidden) -->
-                    <svg class="lock-icon open-lock-icon hidden" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 10V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6v12h12V10h-1zm-6-3c0-1.654 1.346-3 3-3s3 1.346 3 3v3h-6V7z"/>
-                    </svg>
-                    <p class="text-xl mt-4 font-semibold">The Serpent's Coil</p>
-                </div>
-            </div>
-
-            <!-- Lock 3 -->
-            <div class="lock-container lock-card-wrapper w-full relative">
-                <div class="lock-card" data-password="tag" data-lock-id="lock3">
-                    <!-- Closed Lock SVG Icon -->
-                    <svg class="lock-icon closed-lock-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C9.243 2 7 4.243 7 7v3H5v12h14V10h-2V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm-5 8h10v8H7v-8z"/>
-                    </svg>
-                    <!-- Open Lock SVG Icon (Initially hidden) -->
-                    <svg class="lock-icon open-lock-icon hidden" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 10V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6v12h12V10h-1zm-6-3c0-1.654 1.346-3 3-3s3 1.346 3 3v3h-6V7z"/>
-                    </svg>
-                    <p class="text-xl mt-4 font-semibold">The Obsidian Gate</p>
-                </div>
-            </div>
-
-            <!-- Lock 4 -->
-            <div class="lock-container lock-card-wrapper w-full relative">
-                <div class="lock-card" data-password="joey" data-lock-id="lock4">
-                    <!-- Closed Lock SVG Icon -->
-                    <svg class="lock-icon closed-lock-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C9.243 2 7 4.243 7 7v3H5v12h14V10h-2V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v3H9V7c0-1.654 1.346-3 3-3zm-5 8h10v8H7v-8z"/>
-                    </svg>
-                    <!-- Open Lock SVG Icon (Initially hidden) -->
-                    <svg class="lock-icon open-lock-icon hidden" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 10V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6v12h12V10h-1zm-6-3c0-1.654 1.346-3 3-3s3 1.346 3 3v3h-6V7z"/>
-                    </svg>
-                    <p class="text-xl mt-4 font-semibold">The Whispering Tomb</p>
-                </div>
+            <p id="modal-clue" class="text-gray-300 mb-6"></p>
+            <div class="w-full">
+                <input id="modal-password-input" type="text" placeholder="Enter Password" class="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <button id="modal-submit-button" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-md w-full mt-3 transition-colors duration-300">Unlock</button>
+                <p id="modal-error" class="text-red-500 text-sm mt-2 h-4"></p>
             </div>
         </div>
     </div>
 
-    <!-- Modal Structure for Password Entry -->
-    <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-stone-700 border border-amber-400 rounded-lg p-8 shadow-lg text-center relative max-w-sm w-full mx-4" style="font-family: 'Inter', sans-serif;">
-            <button id="closeModal" class="absolute top-3 right-3 text-amber-200 hover:text-white text-2xl font-bold">&times;</button>
-            <h2 class="text-3xl font-bold text-amber-200 mb-6" style="font-family: 'Cinzel Decorative', serif;">Unlock the Secret</h2>
-            <input type="password" id="modalPasswordInput" class="password-input mb-4" placeholder="Enter the ancient code">
-            <button id="modalSubmitButton" class="submit-button">Reveal</button>
-            <p id="modalMessage" class="message text-sm"></p>
-        </div>
-    </div>
-
-    <!-- Artifact Obtained Screen -->
-    <div id="artifactScreen" class="hidden">
-        <svg id="artifactImage" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#FFD700" d="M12 2L6 7l6 5 6-5-6-5zM4 9l8 6 8-6-8-6-8 6zM12 19l-6-4 6-5 6 5-6 4z"/>
-            <path fill="#DAA520" d="M12 22l-6-4 6-5 6 5-6 4z"/>
-        </svg>
-        <h2>ARTIFACT OBTAINED</h2>
-        <p>You have successfully deciphered the ancient riddles and opened the vault. A powerful artifact, steeped in forgotten lore, now rests in your grasp. Its true purpose remains a mystery, waiting for a worthy adventurer to unveil its secrets.</p>
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const lockCards = document.querySelectorAll('.lock-card');
-            const passwordModal = document.getElementById('passwordModal');
-            const closeModalButton = document.getElementById('closeModal');
-            const modalPasswordInput = document.getElementById('modalPasswordInput');
-            const modalSubmitButton = document.getElementById('modalSubmitButton');
-            const modalMessage = document.getElementById('modalMessage');
-            const locksGrid = document.getElementById('locksGrid');
-            const artifactScreen = document.getElementById('artifactScreen');
-            const mainContent = document.getElementById('mainContent'); // The main container for the locks
+            // Data for all the puzzles, now with descriptions
+            const puzzles = [
+                { id: 1, name: 'The Wedding', difficulty: 'Easy', clue: 'Says Mark the date', password: '2908', description: 'A celebration of union holds the key.' },
+                { id: 2, name: '3 Posters', difficulty: 'Easy', clue: 'Ignore the may on the posters', password: '42616', description: 'Look past the obvious to see the message.' },
+                { id: 3, name: 'The Story', difficulty: 'Medium', clue: 'Find the story related clue in order to solve', password: 'TRUST', description: 'A narrative of faith reveals the path.' },
+                { id: 4, name: 'The Hand', difficulty: 'Medium', clue: 'Just the image of a hand pointing to a PC with the answer', password: 'CHRIST@123', description: 'A divine sign points toward the digital realm.' },
+                { id: 5, name: 'Book', difficulty: 'Easy', clue: 'Highlighted page', password: '1126', description: 'Words marked in ink tell a hidden tale.' },
+                { id: 6, name: 'The Video', difficulty: 'Medium', clue: 'Watch the video to find the answer.', password: 'SOLVE', description: 'A moving picture contains the solution.' },
+                { id: 7, name: 'The Broken Crown', difficulty: 'Difficult', clue: 'Find all 3 clues - 2 pieces of moon crown and 3rd one telling about the clue', password: '3554', description: 'Fragments of royalty must be reassembled.' },
+                { id: 8, name: 'Morse Code', difficulty: 'Difficult', clue: 'Read only the numbers', password: '2174', description: 'An old code of dots and dashes speaks in digits.' }
+            ];
 
-            let activeLockCard = null; // To keep track of the lock being interacted with
-            let unlockedLocksCount = 0; // Counter for unlocked locks
+            // SVG icons for the locked and unlocked states
+            const lockedIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 group-hover:text-yellow-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>`;
+            const unlockedIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>`;
 
-            lockCards.forEach(lockCard => {
-                lockCard.addEventListener('click', () => {
-                    // Only open modal if lock is not already unlocked
-                    if (!lockCard.classList.contains('lock-permanently-unlocked')) {
-                        activeLockCard = lockCard; // Set the active lock
-                        modalPasswordInput.value = ''; // Clear previous input
-                        modalMessage.textContent = ''; // Clear previous message
-                        modalMessage.classList.remove('correct', 'incorrect');
-                        passwordModal.classList.remove('hidden'); // Show the modal
-                        setTimeout(() => modalPasswordInput.focus(), 100); // Focus input
-                    }
-                });
-            });
+            // Get all necessary DOM elements
+            const locksContainer = document.getElementById('locks-container');
+            const modal = document.getElementById('password-modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            const modalSubmitButton = document.getElementById('modal-submit-button');
+            const passwordInput = document.getElementById('modal-password-input');
+            
+            let currentPuzzleId = null;
 
-            // Event listener for the modal's submit button
-            modalSubmitButton.addEventListener('click', () => {
-                if (!activeLockCard) return; // Should not happen if logic is correct
-
-                const enteredPassword = modalPasswordInput.value.trim().toLowerCase();
-                const correctPassword = activeLockCard.dataset.password;
-                const closedLockIcon = activeLockCard.querySelector('.closed-lock-icon');
-                const openLockIcon = activeLockCard.querySelector('.open-lock-icon');
-
-                // Clear previous animation classes on the active lock
-                activeLockCard.classList.remove('shake-animation'); // Remove old shake if any
-
-                if (enteredPassword === correctPassword) {
-                    modalMessage.textContent = 'Success! The path is open.';
-                    modalMessage.classList.remove('incorrect');
-                    modalMessage.classList.add('correct');
-
-                    // Play the success animation
-                    activeLockCard.classList.add('lock-opened-animation');
-
-                    // Once the animation finishes, apply the permanent unlocked state
-                    activeLockCard.addEventListener('animationend', () => {
-                        activeLockCard.classList.remove('lock-opened-animation');
-                        // Change lock icon to open lock
-                        closedLockIcon.classList.add('hidden');
-                        openLockIcon.classList.remove('hidden');
-                        activeLockCard.classList.add('lock-permanently-unlocked'); // Apply permanent styles
-                        activeLockCard.style.pointerEvents = 'none'; // Disable interaction
-                    }, { once: true });
-
-
-                    unlockedLocksCount++; // Increment unlocked count
-
-                    // Hide modal after a short delay
-                    setTimeout(() => {
-                        passwordModal.classList.add('hidden');
-                        // Check if all locks are unlocked
-                        if (unlockedLocksCount === lockCards.length) {
-                            triggerFinalSequence();
-                        }
-                    }, 1500); // Give time for success message to be read and animation to start
-                } else {
-                    modalMessage.textContent = 'Access Denied. Try again.';
-                    modalMessage.classList.remove('correct');
-                    modalMessage.classList.add('incorrect');
-                    modalPasswordInput.value = ''; // Clear incorrect input
-                    modalPasswordInput.focus(); // Keep focus for retry
-
-                    // Apply shake animation to the actual lock card (on the main page)
-                    activeLockCard.classList.add('shake-animation');
-                    activeLockCard.addEventListener('animationend', () => {
-                        activeLockCard.classList.remove('shake-animation');
-                    }, { once: true });
+            // Function to get the color for the difficulty tag
+            const getDifficultyClass = (difficulty) => {
+                switch (difficulty.toLowerCase()) {
+                    case 'easy': return 'bg-green-600 text-green-100';
+                    case 'medium': return 'bg-yellow-600 text-yellow-100';
+                    case 'difficult': return 'bg-red-600 text-red-100';
+                    default: return 'bg-gray-600 text-gray-100';
                 }
+            };
+            
+            // Generate each lock item
+            puzzles.forEach(puzzle => {
+                const lockDiv = document.createElement('div');
+                lockDiv.id = `lock-item-${puzzle.id}`;
+                lockDiv.className = 'bg-gray-800 border-2 border-gray-700 rounded-xl p-6 flex flex-col items-center justify-between text-center min-h-[180px] transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer group';
+                lockDiv.setAttribute('data-solved', 'false');
+                
+                lockDiv.innerHTML = `
+                    <div id="lock-icon-${puzzle.id}">${lockedIconSVG}</div>
+                    <p class="text-gray-400 text-sm mt-2">${puzzle.description}</p>
+                    <span class="text-gray-500 font-bold text-lg mt-2 font-cinzel">#${puzzle.id}</span>
+                `;
+
+                lockDiv.addEventListener('click', () => openModal(puzzle.id));
+                locksContainer.appendChild(lockDiv);
             });
 
-            // Allow pressing Enter to submit password in the modal
-            modalPasswordInput.addEventListener('keypress', (event) => {
-                if (event.key === 'Enter') {
-                    modalSubmitButton.click();
-                }
-            });
+            // Function to open and populate the modal
+            function openModal(id) {
+                const lockItem = document.getElementById(`lock-item-${id}`);
+                if (lockItem.getAttribute('data-solved') === 'true') return;
 
-            // Close modal logic
-            closeModalButton.addEventListener('click', () => {
-                passwordModal.classList.add('hidden');
-            });
+                currentPuzzleId = id;
+                const puzzle = puzzles.find(p => p.id === id);
 
-            // Close modal if clicking on the overlay itself
-            passwordModal.addEventListener('click', (event) => {
-                if (event.target === passwordModal) { // Clicked on the overlay, not the content
-                    passwordModal.classList.add('hidden');
-                }
-            });
-
-            // Function to trigger the final sequence
-            function triggerFinalSequence() {
-                // Apply swirl animation to each lock container with staggered delays
-                const lockContainers = document.querySelectorAll('.lock-container');
-                lockContainers.forEach((container, index) => {
-                    // Randomize swirl direction and rotation slightly for more organic feel
-                    const dx = (Math.random() - 0.5) * 400; // -200 to 200px horizontal
-                    const dy = (Math.random() - 0.5) * 400; // -200 to 200px vertical
-                    const rot = (Math.random() - 0.5) * 720; // -360 to 360 degrees rotation
-
-                    container.style.setProperty('--dx', `${dx}px`);
-                    container.style.setProperty('--dy', `${dy}px`);
-                    container.style.setProperty('--rot', `${rot}deg`);
-                    container.style.setProperty('--delay', `${index * 0.1}s`); // Staggered delay
-                    container.classList.add('swirling-away');
-                });
-
-                // After swirl animation, hide main content and show artifact screen
-                setTimeout(() => {
-                    mainContent.classList.add('hidden'); // Hide the main content
-                    artifactScreen.classList.remove('hidden'); // Show the artifact screen
-                    artifactScreen.classList.add('show'); // Trigger fade-in
-                }, 1500 + (lockCards.length * 100)); // Delay based on swirl animation duration and stagger
+                document.getElementById('modal-title').textContent = puzzle.name;
+                document.getElementById('modal-clue').textContent = puzzle.clue;
+                const difficultySpan = document.getElementById('modal-difficulty');
+                difficultySpan.textContent = puzzle.difficulty;
+                difficultySpan.className = `text-sm font-semibold px-2 py-1 rounded h-fit ${getDifficultyClass(puzzle.difficulty)}`;
+                
+                passwordInput.value = '';
+                document.getElementById('modal-error').textContent = '';
+                
+                modal.classList.remove('modal-hidden');
+                setTimeout(() => passwordInput.focus(), 50);
             }
+
+            // Function to close the modal
+            function closeModal() {
+                modal.classList.add('modal-hidden');
+                currentPuzzleId = null;
+            }
+
+            // Function to check the entered password
+            function checkPassword() {
+                if (currentPuzzleId === null) return;
+                
+                const puzzle = puzzles.find(p => p.id === currentPuzzleId);
+                const input = passwordInput;
+                const errorP = document.getElementById('modal-error');
+
+                if (input.value.trim().toUpperCase() === puzzle.password.toUpperCase()) {
+                    const lockItem = document.getElementById(`lock-item-${currentPuzzleId}`);
+                    const lockIcon = document.getElementById(`lock-icon-${currentPuzzleId}`);
+                    
+                    lockItem.classList.remove('border-gray-700', 'cursor-pointer', 'group');
+                    lockItem.classList.add('border-green-500');
+                    lockItem.setAttribute('data-solved', 'true');
+                    lockIcon.innerHTML = unlockedIconSVG;
+                    
+                    closeModal();
+                    checkAllSolved();
+                } else {
+                    errorP.textContent = 'Incorrect password. Try again.';
+                    modalContent.classList.add('shake');
+                    input.focus();
+                    setTimeout(() => {
+                        modalContent.classList.remove('shake');
+                        errorP.textContent = '';
+                    }, 1000);
+                }
+            }
+
+            // Function to check if all puzzles have been solved
+            function checkAllSolved() {
+                const solvedLocks = document.querySelectorAll('[data-solved="true"]').length;
+                if (solvedLocks === puzzles.length) {
+                    const congratsContainer = document.getElementById('congrats-container');
+                    congratsContainer.innerHTML = `
+                        <div class="bg-gray-800 border-2 border-green-500 rounded-xl p-8 congrats-message">
+                            <h2 class="text-4xl font-bold text-green-400 text-center font-cinzel">Congratulations!</h2>
+                            <p class="text-xl text-gray-300 text-center mt-4">You have unlocked all the artifacts and found the treasure!</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // *** BUG FIXES & EVENT LISTENERS ***
+            // 1. Close modal with the close button
+            modalCloseButton.addEventListener('click', closeModal);
+            // 2. Close modal by clicking the background
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+            // 3. Submit password with the "Unlock" button
+            modalSubmitButton.addEventListener('click', checkPassword);
+            // 4. Submit password by pressing "Enter"
+            passwordInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    checkPassword();
+                }
+            });
         });
     </script>
+
 </body>
 </html>
+
