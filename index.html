@@ -91,16 +91,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Data for all the puzzles, now with descriptions
+            // Data for all the puzzles, descriptions removed
             const puzzles = [
-                { id: 1, name: 'The Wedding', difficulty: 'Easy', clue: 'Says Mark the date', password: '2908', description: 'A celebration of union holds the key.' },
-                { id: 2, name: '3 Posters', difficulty: 'Easy', clue: 'Ignore the may on the posters', password: '42616', description: 'Look past the obvious to see the message.' },
-                { id: 3, name: 'The Story', difficulty: 'Medium', clue: 'Find the story related clue in order to solve', password: 'TRUST', description: 'A narrative of faith reveals the path.' },
-                { id: 4, name: 'The Hand', difficulty: 'Medium', clue: 'Just the image of a hand pointing to a PC with the answer', password: 'CHRIST@123', description: 'A divine sign points toward the digital realm.' },
-                { id: 5, name: 'Book', difficulty: 'Easy', clue: 'Highlighted page', password: '1126', description: 'Words marked in ink tell a hidden tale.' },
-                { id: 6, name: 'The Video', difficulty: 'Medium', clue: 'Watch the video to find the answer.', password: 'SOLVE', description: 'A moving picture contains the solution.' },
-                { id: 7, name: 'The Broken Crown', difficulty: 'Difficult', clue: 'Find all 3 clues - 2 pieces of moon crown and 3rd one telling about the clue', password: '3554', description: 'Fragments of royalty must be reassembled.' },
-                { id: 8, name: 'Morse Code', difficulty: 'Difficult', clue: 'Read only the numbers', password: '2174', description: 'An old code of dots and dashes speaks in digits.' }
+                { id: 1, name: 'The Wedding', difficulty: 'Easy', clue: 'Says Mark the date', password: '2908' },
+                { id: 2, name: '3 Posters', difficulty: 'Easy', clue: 'Ignore the may on the posters', password: '42616' },
+                { id: 3, name: 'The Story', difficulty: 'Medium', clue: 'Find the story related clue in order to solve', password: 'TRUST' },
+                { id: 4, name: 'The Hand', difficulty: 'Medium', clue: 'Just the image of a hand pointing to a PC with the answer', password: 'CHRIST@123' },
+                { id: 5, name: 'Book', difficulty: 'Easy', clue: 'Highlighted page', password: '1126' },
+                { id: 6, name: 'The Video', difficulty: 'Medium', clue: 'Watch the video to find the answer.', password: 'SOLVE' },
+                { id: 7, name: 'The Broken Crown', difficulty: 'Difficult', clue: 'Find all 3 clues - 2 pieces of moon crown and 3rd one telling about the clue', password: '3554' },
+                { id: 8, name: 'Morse Code', difficulty: 'Difficult', clue: 'Read only the numbers', password: '2174' }
             ];
 
             // SVG icons for the locked and unlocked states
@@ -131,13 +131,14 @@
             puzzles.forEach(puzzle => {
                 const lockDiv = document.createElement('div');
                 lockDiv.id = `lock-item-${puzzle.id}`;
-                lockDiv.className = 'bg-gray-800 border-2 border-gray-700 rounded-xl p-6 flex flex-col items-center justify-between text-center min-h-[180px] transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer group';
+                lockDiv.className = 'bg-gray-800 border-2 border-gray-700 rounded-xl p-6 flex flex-col items-center justify-center text-center min-h-[160px] transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer group';
                 lockDiv.setAttribute('data-solved', 'false');
                 
+                // Updated HTML to show the puzzle name instead of the description
                 lockDiv.innerHTML = `
                     <div id="lock-icon-${puzzle.id}">${lockedIconSVG}</div>
-                    <p class="text-gray-400 text-sm mt-2">${puzzle.description}</p>
-                    <span class="text-gray-500 font-bold text-lg mt-2 font-cinzel">#${puzzle.id}</span>
+                    <p class="text-yellow-400 font-cinzel mt-3 text-lg">${puzzle.name}</p>
+                    <span class="text-gray-500 font-bold text-base mt-auto pt-2 font-cinzel">#${puzzle.id}</span>
                 `;
 
                 lockDiv.addEventListener('click', () => openModal(puzzle.id));
@@ -215,18 +216,14 @@
                 }
             }
 
-            // *** BUG FIXES & EVENT LISTENERS ***
-            // 1. Close modal with the close button
+            // Event Listeners for modal functionality
             modalCloseButton.addEventListener('click', closeModal);
-            // 2. Close modal by clicking the background
             modal.addEventListener('click', (event) => {
                 if (event.target === modal) {
                     closeModal();
                 }
             });
-            // 3. Submit password with the "Unlock" button
             modalSubmitButton.addEventListener('click', checkPassword);
-            // 4. Submit password by pressing "Enter"
             passwordInput.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     checkPassword();
@@ -237,4 +234,3 @@
 
 </body>
 </html>
-
