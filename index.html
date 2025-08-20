@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Lost Artifact</title>
+    <title>The Lost Artefact</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for a thematic feel -->
@@ -52,7 +52,7 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <!-- Main title of the escape room -->
         <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-6xl font-bold text-yellow-300 tracking-wider font-cinzel">The Lost Artifact</h1>
+            <h1 class="text-4xl md:text-6xl font-bold text-yellow-300 tracking-wider font-cinzel">The Lost Artefact</h1>
             <p class="text-gray-400 mt-2 text-lg">Click on a lock to solve the puzzle.</p>
         </header>
 
@@ -79,8 +79,8 @@
                 <h2 id="modal-title" class="text-3xl font-bold text-yellow-400 font-cinzel"></h2>
                 <span id="modal-difficulty" class="text-sm font-semibold px-2 py-1 rounded h-fit"></span>
             </div>
-            <p id="modal-clue" class="text-gray-300 mb-6"></p>
-            <div class="w-full">
+            <!-- The clue paragraph is now removed from the modal -->
+            <div class="w-full mt-6">
                 <input id="modal-password-input" type="text" placeholder="Enter Password" class="bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-yellow-500">
                 <button id="modal-submit-button" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-md w-full mt-3 transition-colors duration-300">Unlock</button>
                 <p id="modal-error" class="text-red-500 text-sm mt-2 h-4"></p>
@@ -91,16 +91,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Data for all the puzzles, descriptions removed
+            // Data for all the puzzles. Clues are now comments for the developer.
             const puzzles = [
-                { id: 1, name: 'The Wedding', difficulty: 'Easy', clue: 'Says Mark the date', password: '2908' },
-                { id: 2, name: '3 Posters', difficulty: 'Easy', clue: 'Ignore the may on the posters', password: '42616' },
-                { id: 3, name: 'The Story', difficulty: 'Medium', clue: 'Find the story related clue in order to solve', password: 'TRUST' },
-                { id: 4, name: 'The Hand', difficulty: 'Medium', clue: 'Just the image of a hand pointing to a PC with the answer', password: 'CHRIST@123' },
-                { id: 5, name: 'Book', difficulty: 'Easy', clue: 'Highlighted page', password: '1126' },
-                { id: 6, name: 'The Video', difficulty: 'Medium', clue: 'Watch the video to find the answer.', password: 'SOLVE' },
-                { id: 7, name: 'The Broken Crown', difficulty: 'Difficult', clue: 'Find all 3 clues - 2 pieces of moon crown and 3rd one telling about the clue', password: '3554' },
-                { id: 8, name: 'Morse Code', difficulty: 'Difficult', clue: 'Read only the numbers', password: '2174' }
+                { id: 1, name: 'The Wedding', difficulty: 'Easy', /* clue: 'Says Mark the date' */ password: '2908' },
+                { id: 2, name: '3 Posters', difficulty: 'Easy', /* clue: 'Ignore the may on the posters' */ password: '42616' },
+                { id: 3, name: 'The Story', difficulty: 'Medium', /* clue: 'Find the story related clue in order to solve' */ password: 'TRUST' },
+                { id: 4, name: 'The Hand', difficulty: 'Medium', /* clue: 'Just the image of a hand pointing to a PC with the answer' */ password: 'CHRIST@123' },
+                { id: 5, name: 'Book', difficulty: 'Easy', /* clue: 'Highlighted page' */ password: '1126' },
+                { id: 6, name: 'The Video', difficulty: 'Medium', /* clue: 'Watch the video to find the answer.' */ password: 'SOLVE' },
+                { id: 7, name: 'The Broken Crown', difficulty: 'Difficult', /* clue: 'Find all 3 clues - 2 pieces of moon crown and 3rd one telling about the clue' */ password: '3554' },
+                { id: 8, name: 'Morse Code', difficulty: 'Difficult', /* clue: 'Read only the numbers' */ password: '2174' }
             ];
 
             // SVG icons for the locked and unlocked states
@@ -134,7 +134,7 @@
                 lockDiv.className = 'bg-gray-800 border-2 border-gray-700 rounded-xl p-6 flex flex-col items-center justify-center text-center min-h-[160px] transition-all duration-300 transform hover:scale-105 shadow-lg cursor-pointer group';
                 lockDiv.setAttribute('data-solved', 'false');
                 
-                // Updated HTML to show the puzzle name instead of the description
+                // Updated HTML to show the puzzle name
                 lockDiv.innerHTML = `
                     <div id="lock-icon-${puzzle.id}">${lockedIconSVG}</div>
                     <p class="text-yellow-400 font-cinzel mt-3 text-lg">${puzzle.name}</p>
@@ -154,7 +154,7 @@
                 const puzzle = puzzles.find(p => p.id === id);
 
                 document.getElementById('modal-title').textContent = puzzle.name;
-                document.getElementById('modal-clue').textContent = puzzle.clue;
+                // document.getElementById('modal-clue').textContent = puzzle.clue; // This line is removed
                 const difficultySpan = document.getElementById('modal-difficulty');
                 difficultySpan.textContent = puzzle.difficulty;
                 difficultySpan.className = `text-sm font-semibold px-2 py-1 rounded h-fit ${getDifficultyClass(puzzle.difficulty)}`;
@@ -210,7 +210,7 @@
                     congratsContainer.innerHTML = `
                         <div class="bg-gray-800 border-2 border-green-500 rounded-xl p-8 congrats-message">
                             <h2 class="text-4xl font-bold text-green-400 text-center font-cinzel">Congratulations!</h2>
-                            <p class="text-xl text-gray-300 text-center mt-4">You have unlocked all the artifacts and found the treasure!</p>
+                            <p class="text-xl text-gray-300 text-center mt-4">You have unlocked all the artefacts and found the treasure!</p>
                         </div>
                     `;
                 }
